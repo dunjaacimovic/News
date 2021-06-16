@@ -15,30 +15,44 @@ class NewsTableViewCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        setupView()
+    }
+    
+    func configure(with item: NewsTableViewCellItem) {
+        titleLabel.text = item.title
+        descriptionLabel.text = item.description
+        configureImageView(with: item.imageData, source: item.source)
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        titleLabel.text = nil
+        descriptionLabel.text = nil
+        cellImageView.image = nil
+    }
+}
+
+private extension NewsTableViewCell {
+    
+    private func setupView() {
+        titleLabel.numberOfLines = 2
+        titleLabel.font = .systemFont(ofSize: 18, weight: .semibold)
+        descriptionLabel.numberOfLines = 0
+        descriptionLabel.font = .systemFont(ofSize: 14, weight: .semibold)
+        cellImageView.layer.cornerRadius = 6
         cellImageView.layer.masksToBounds = true
         cellImageView.layer.borderColor = UIColor.lightGray.cgColor
         cellImageView.layer.borderWidth = 1.0 / UIScreen.main.scale
+        cellImageView.backgroundColor = .secondarySystemBackground
+        cellImageView.clipsToBounds = true
+        cellImageView.contentMode = .scaleAspectFill
     }
     
-    func configure(with item: NewsViewItemInterface) {
-        titleLabel.text = item.title
-        descriptionLabel.text = item.description
-        
-//        if let url = viewModel.imageURL {
-//
-//        }
-//        if let url = item.imageURL {
-//            cellImageView.image = UIImage(
-//        }
+    private func configureImageView(with imageData: Data?, source: Source) {
+        if let data = imageData {
+            self.cellImageView.image = UIImage(data: data)
+        } else if let image = UIImage(named: source.name) {
+            self.cellImageView.image = image
+        }
     }
-    
-//    func configure(with item: HomeViewItemInterface) {
-//        cellTextLabel.text = item.title
-//
-//        if let url = item.imageURL {
-//            cellImageView.af_setImage(withURL: url, placeholderImage: #imageLiteral(resourceName: "image-placeholder"))
-//        } else {
-//            cellImageView.image = #imageLiteral(resourceName: "image-placeholder")
-//        }
-//    }
 }

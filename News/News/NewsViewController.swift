@@ -9,8 +9,6 @@
 //
 
 import UIKit
-import RxSwift
-import RxCocoa
 import SafariServices
 
 final class NewsViewController: UIViewController {
@@ -23,15 +21,14 @@ final class NewsViewController: UIViewController {
 
     var presenter: NewsPresenterInterface!
 
-    // MARK: - Private properties -
-
-    private let disposeBag = DisposeBag()
-
     // MARK: - Lifecycle -
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.delegate = self
+        tableView.dataSource = self
         setupView()
+        presenter.viewDidLoad()
     }
 
 }
@@ -40,7 +37,9 @@ final class NewsViewController: UIViewController {
 
 extension NewsViewController: NewsViewInterface {
     func reloadData() {
-        tableView.reloadData()
+        DispatchQueue.main.async { [weak self] in
+            self?.tableView.reloadData()
+        }
     }
 }
 
@@ -51,7 +50,7 @@ extension NewsViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "NewsTableViewCell", for: indexPath) as! NewsTableViewCell
-//        cell.configure(with: item)
+        cell.configure(with: presenter.item(at: indexPath))
         return cell
     }
 }
@@ -59,7 +58,7 @@ extension NewsViewController: UITableViewDataSource {
 extension NewsViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        presentArticle(at: indexPath.row)
+        presenter.didSelectItem(at: indexPath)
     }
     
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -68,15 +67,8 @@ extension NewsViewController: UITableViewDelegate {
 }
 
 private extension NewsViewController {
-    
     func setupView() {
-//        let output = News.ViewOutput()
-//        let input = presenter.configure(with: output)
-    }
-    
-    func presentArticle(at index: Int) {
-        guard let articleURL = presenter.getArticleURL(at: index) else { return }
-        present(SFSafariViewController(url: articleURL), animated: true)
+        self.navigationItem.title = "News"
+        self.navigationController?.navigationBar.prefersLargeTitles = true
     }
 }
-

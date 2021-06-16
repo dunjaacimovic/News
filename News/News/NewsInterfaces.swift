@@ -9,11 +9,9 @@
 //
 
 import UIKit
-import RxSwift
-import RxCocoa
 
 enum NewsNavigationOption {
-    case article(Article)
+    case article(String)
 }
 
 protocol NewsWireframeInterface: WireframeInterface {
@@ -27,17 +25,11 @@ protocol NewsViewInterface: ViewInterface {
 protocol NewsPresenterInterface: PresenterInterface {
     func viewDidLoad()
     func numberOfItems() -> Int
-    func item(at indexPath: IndexPath) -> NewsViewItemInterface
+    func item(at indexPath: IndexPath) -> NewsTableViewCellItem
+    func didSelectItem(at indexPath: IndexPath)
 }
 
 protocol NewsInteractorInterface: InteractorInterface {
     func getTopStories(completion: @escaping (Result<[Article], Error>) -> Void)
-    func getImage(from url: String, completion: @escaping (Result<UIImage?, Error>) -> Void)
-}
-
-protocol NewsViewItemInterface {
-    var title: String? { get }
-    var description: String? { get }
-    var imageURL: String? { get }
-    var imageData: Data? { get set }
+    func getImage(from url: String?, completion: @escaping (Result<Data?, Error>) -> Void)
 }

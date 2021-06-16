@@ -9,8 +9,6 @@
 //
 
 import UIKit
-import RxSwift
-import RxCocoa
 import SafariServices
 
 final class NewsWireframe: BaseWireframe {
@@ -37,13 +35,13 @@ final class NewsWireframe: BaseWireframe {
 extension NewsWireframe: NewsWireframeInterface {
     func navigate(to option: NewsNavigationOption) {
         switch option {
-        case .article(let article):
-            openSafari(with: article)
+        case .article(let url):
+            openSafari(with: url)
         }
     }
     
-    private func openSafari(with article: Article) {
-        guard let url = URL(string: article.url ?? "") else { return }
+    private func openSafari(with url: String) {
+        guard let url = URL(string: url) else { return }
         let safariViewController = SFSafariViewController(url: url)
         navigationController?.present(safariViewController, animated: true, completion: nil)
     }

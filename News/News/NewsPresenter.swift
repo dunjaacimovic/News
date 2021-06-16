@@ -9,8 +9,6 @@
 //
 
 import Foundation
-import RxSwift
-import RxCocoa
 
 final class NewsPresenter {
 
@@ -19,7 +17,11 @@ final class NewsPresenter {
     private unowned let view: NewsViewInterface
     private let interactor: NewsInteractorInterface
     private let wireframe: NewsWireframeInterface
-    private var items: [Article] = [] { didSet {view.reloadData()} }
+    private var items: [NewsTableViewCellItem] = [] {
+        didSet {
+            view.reloadData()
+        }
+    }
 
     // MARK: - Lifecycle -
 
@@ -33,6 +35,7 @@ final class NewsPresenter {
 // MARK: - Extensions -
 
 extension NewsPresenter: NewsPresenterInterface {
+    
     func viewDidLoad() {
         interactor.getTopStories { [weak self] response in
             self?.handleArticleList(from: response)
@@ -43,18 +46,18 @@ extension NewsPresenter: NewsPresenterInterface {
         return items.count
     }
     
-    func item(at indexPath: IndexPath) -> NewsViewItemInterface {
-        guard let image = items[indexPath.row].image else {
-            let url = items[indexPath.row].imageURL
-            items[indexPath.row].image =
+    func item(at indexPath: IndexPath) -> NewsTableViewCellItem {
+        let item = items[indexPath.row]
+        if item.imageData == nil {
+            interactor.getImage(from: item.imageURL) { [weak self] response in
+                self?.handleImageData(for: indexPath, from: response)
+            }
         }
-            
         return items[indexPath.row]
     }
     
     func didSelectItem(at indexPath: IndexPath){
-        let article = items[indexPath.row]
-        wireframe.navigate(to: .article(article))
+        wireframe.navigate(to: .article(items[indexPath.row].url))
     }
     
 }
@@ -63,11 +66,27 @@ private extension NewsPresenter {
     
     func handleArticleList(from result: Result<[Article], Error>) {
         switch result {
-            case .success(let articles):
-                self.items = articles
-            case .failure(let error):
-                self.wireframe.showErrorAlert(with: error.localizedDescription)
+        case .success(let articles):
+            self.items = articles.map {
+                NewsTableViewCellItem(
+                    title: $0.title ?? "",
+                    description: $0.description ?? "",
+                    imageURL: $0.urlToImage ?? "",
+                    url: $0.url ?? "",
+                    source: $0.source
+                )
+            }
+        case .failure(let error):
+            self.wireframe.showErrorAlert(with: error.localizedDescription)
+        }
+    }
+    
+    func handleImageData(for indexPath: IndexPath, from result: Result<Data?, Error>) -> Void {
+        switch result {
+        case .success(let imageData):
+            self.items[indexPath.row].imageData = imageData
+        case .failure(_):
+            break
         }
     }
 }
-

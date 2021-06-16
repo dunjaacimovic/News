@@ -23,9 +23,3 @@ struct Article: Codable {
 struct Source: Codable {
     let name: String
 }
-
-extension Article: NewsViewItemInterface {
-    var imageURL: String? {
-        return urlToImage
-    }
-}
