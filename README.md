@@ -3,4 +3,5 @@
 News app
 
 * simple app built with VIPER architecture
-![Image](https://user-images.githubusercontent.com/40772171/122260878-0f4c9d80-ced4-11eb-8b9b-daba06f1fe29.PNG)
+![Image 2](https://user-images.githubusercontent.com/40772171/122604388-2dea9a00-d076-11eb-8753-868e3fd67c48.PNG)
+
