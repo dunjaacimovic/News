@@ -9,10 +9,13 @@ import UIKit
 
 class NewsTableViewCell: UITableViewCell {
     
+    //MARK: - IBOutlets -
+    
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var descriptionLabel: UILabel!
     @IBOutlet weak var cellImageView: UIImageView!
     
+    //MARK: - Lifecycle -
     override func awakeFromNib() {
         super.awakeFromNib()
         setupView()
@@ -32,13 +35,15 @@ class NewsTableViewCell: UITableViewCell {
     }
 }
 
+// MARK: - Extensions -
+
 private extension NewsTableViewCell {
     
     private func setupView() {
         titleLabel.numberOfLines = 2
         titleLabel.font = .systemFont(ofSize: 18, weight: .semibold)
-        descriptionLabel.numberOfLines = 0
-        descriptionLabel.font = .systemFont(ofSize: 14, weight: .semibold)
+        descriptionLabel.numberOfLines = 3
+        descriptionLabel.font = .systemFont(ofSize: 15, weight: .light)
         cellImageView.layer.cornerRadius = 6
         cellImageView.layer.masksToBounds = true
         cellImageView.layer.borderColor = UIColor.lightGray.cgColor
