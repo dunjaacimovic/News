@@ -20,8 +20,4 @@ extension NewsInteractor: NewsInteractorInterface {
     func getTopStories(completion: @escaping (Result<[Article], Error>) -> Void) {
         newsService.getTopStories(completion: completion)
     }
-    
-    func getImage(from url: String?, completion: @escaping (Result<Data?, Error>) -> Void) {
-        newsService.getImage(from: url, completion: completion)
-    }
 }

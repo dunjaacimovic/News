@@ -12,11 +12,11 @@ import UIKit
 import SafariServices
 
 final class NewsViewController: UIViewController {
-    
+
     //MARK: - IBOutlets
     
-    @IBOutlet weak var tableView: UITableView!
-
+    @IBOutlet private weak var tableView: UITableView!
+    
     // MARK: - Public properties -
 
     var presenter: NewsPresenterInterface!
@@ -25,9 +25,7 @@ final class NewsViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.delegate = self
-        tableView.dataSource = self
-        setupView()
+        self.setupView()
         presenter.viewDidLoad()
     }
 
@@ -37,9 +35,7 @@ final class NewsViewController: UIViewController {
 
 extension NewsViewController: NewsViewInterface {
     func reloadData() {
-        DispatchQueue.main.async { [weak self] in
-            self?.tableView.reloadData()
-        }
+        tableView.reloadData()
     }
 }
 
@@ -56,13 +52,13 @@ extension NewsViewController: UITableViewDataSource {
 }
 
 extension NewsViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        120
+    }
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         presenter.didSelectItem(at: indexPath)
-    }
-    
-    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        120
     }
 }
 
@@ -70,5 +66,11 @@ private extension NewsViewController {
     func setupView() {
         self.navigationItem.title = "News"
         self.navigationController?.navigationBar.prefersLargeTitles = true
+        self.setupTableView()
+    }
+    
+    func setupTableView() {
+        tableView.delegate = self
+        tableView.dataSource = self
     }
 }

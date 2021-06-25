@@ -47,16 +47,10 @@ extension NewsPresenter: NewsPresenterInterface {
     }
     
     func item(at indexPath: IndexPath) -> NewsTableViewCellItem {
-        let item = items[indexPath.row]
-        if item.imageData == nil {
-            interactor.getImage(from: item.imageURL) { [weak self] response in
-                self?.handleImageData(for: indexPath, from: response)
-            }
-        }
         return items[indexPath.row]
     }
     
-    func didSelectItem(at indexPath: IndexPath){
+    func didSelectItem(at indexPath: IndexPath) {
         wireframe.navigate(to: .article(items[indexPath.row].url))
     }
     
@@ -78,15 +72,6 @@ private extension NewsPresenter {
             }
         case .failure(let error):
             self.wireframe.showErrorAlert(with: error.localizedDescription)
-        }
-    }
-    
-    func handleImageData(for indexPath: IndexPath, from result: Result<Data?, Error>) -> Void {
-        switch result {
-        case .success(let imageData):
-            self.items[indexPath.row].imageData = imageData
-        case .failure(_):
-            break
         }
     }
 }

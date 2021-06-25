@@ -15,6 +15,9 @@ class NewsTableViewCell: UITableViewCell {
     @IBOutlet weak var descriptionLabel: UILabel!
     @IBOutlet weak var cellImageView: UIImageView!
     
+    //MARK: - Private properties -
+    var downloadTask: URLSessionDownloadTask?
+    
     //MARK: - Lifecycle -
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -24,13 +27,16 @@ class NewsTableViewCell: UITableViewCell {
     func configure(with item: NewsTableViewCellItem) {
         titleLabel.text = item.title
         descriptionLabel.text = item.description
-        configureImageView(with: item.imageData, source: item.source)
+        configureImageView(with: item.imageURL, source: item.source)
+        
     }
     
     override func prepareForReuse() {
         super.prepareForReuse()
         titleLabel.text = nil
         descriptionLabel.text = nil
+        downloadTask?.cancel()
+        downloadTask = nil 
         cellImageView.image = nil
     }
 }
@@ -53,11 +59,11 @@ private extension NewsTableViewCell {
         cellImageView.contentMode = .scaleAspectFill
     }
     
-    private func configureImageView(with imageData: Data?, source: Source) {
-        if let data = imageData {
-            self.cellImageView.image = UIImage(data: data)
-        } else if let image = UIImage(named: source.name) {
-            self.cellImageView.image = image
+    private func configureImageView(with url: String, source: Source) {
+        if let imageUrl = URL(string: url) {
+            downloadTask = cellImageView.loadImage(url: imageUrl)
+        } else {
+            self.cellImageView.image = UIImage(named: source.name)
         }
     }
 }

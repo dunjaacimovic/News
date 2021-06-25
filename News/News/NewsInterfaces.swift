@@ -31,5 +31,4 @@ protocol NewsPresenterInterface: PresenterInterface {
 
 protocol NewsInteractorInterface: InteractorInterface {
     func getTopStories(completion: @escaping (Result<[Article], Error>) -> Void)
-    func getImage(from url: String?, completion: @escaping (Result<Data?, Error>) -> Void)
 }
